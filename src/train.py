@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
+import matplotlib.pyplot as plt
 from dataset import get_dataloaders
 from model import create_model
 from config import LEARNING_RATE, NUM_EPOCHS, MODEL_PATH
@@ -24,7 +24,8 @@ optimizer = optim.Adam(
 )
 
 best_accuracy = 0.0
-
+train_losses=[]
+val_accuracies=[]
 for epoch in range(NUM_EPOCHS):
     print(f"Epoch {epoch+1}/{NUM_EPOCHS}")
 
@@ -46,6 +47,7 @@ for epoch in range(NUM_EPOCHS):
         running_loss += loss.item()
 
     epoch_loss = running_loss / len(train_loader)
+    train_losses.append(epoch_loss)
     print(f"Train Loss: {epoch_loss:.4f}")
 
     model.eval()
@@ -64,9 +66,28 @@ for epoch in range(NUM_EPOCHS):
             total += len(labels)
 
     val_accuracy = correct / total
+    val_accuracies.append(val_accuracy)
     print(f"Validation Accuracy: {val_accuracy:.4f}")
 
     if val_accuracy > best_accuracy:
         best_accuracy = val_accuracy
         torch.save(model.state_dict(), MODEL_PATH)
         print("Best model saved.")
+
+plt.figure()
+plt.plot(train_losses)
+plt.title("Training Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.savefig("results/plots/train_loss.png")
+plt.close()
+
+plt.figure()
+plt.plot(val_accuracies)
+plt.title("Validation Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.savefig("results/plots/val_accuracy.png")
+plt.close()
+
+print("Training plots saved.")
