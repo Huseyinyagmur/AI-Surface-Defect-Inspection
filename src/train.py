@@ -75,18 +75,20 @@ for epoch in range(NUM_EPOCHS):
         print("Best model saved.")
 
 plt.figure()
-plt.plot(train_losses)
+plt.plot(range(1,NUM_EPOCHS+1),train_losses)
 plt.title("Training Loss")
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
+plt.grid(True)
 plt.savefig("results/plots/train_loss.png")
 plt.close()
 
 plt.figure()
-plt.plot(val_accuracies)
+plt.plot(range(1,NUM_EPOCHS+1),val_accuracies)
 plt.title("Validation Accuracy")
 plt.xlabel("Epoch")
 plt.ylabel("Accuracy")
+plt.grid(True)
 plt.savefig("results/plots/val_accuracy.png")
 plt.close()
 
