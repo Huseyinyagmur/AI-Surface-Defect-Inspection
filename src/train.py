@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from dataset import get_dataloaders
 from model import create_model
 from config import LEARNING_RATE, NUM_EPOCHS, MODEL_PATH
-
+from sklearn.metrics import confusion_matrix
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -26,6 +26,7 @@ optimizer = optim.Adam(
 best_accuracy = 0.0
 train_losses=[]
 val_accuracies=[]
+
 for epoch in range(NUM_EPOCHS):
     print(f"Epoch {epoch+1}/{NUM_EPOCHS}")
 
@@ -53,7 +54,8 @@ for epoch in range(NUM_EPOCHS):
     model.eval()
     correct = 0
     total = 0
-
+    all_labels=[]
+    all_predictions=[]
     with torch.no_grad():
         for images, labels in val_loader:
             images = images.to(device)
@@ -64,7 +66,8 @@ for epoch in range(NUM_EPOCHS):
 
             correct += (predicted == labels).sum().item()
             total += len(labels)
-
+            all_labels.extend(labels.cpu().numpy())
+            all_predictions.extend(predicted.cpu().numpy())
     val_accuracy = correct / total
     val_accuracies.append(val_accuracy)
     print(f"Validation Accuracy: {val_accuracy:.4f}")
